@@ -9,6 +9,8 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Drawing;
 using System.Web.UI.HtmlControls;
+using System.Text.RegularExpressions;
+using System.Web.Services.Description;
 
 namespace blog
 {
@@ -60,7 +62,6 @@ namespace blog
 			}
 
 		}
-
 		protected void reg_Click(object sender, EventArgs e)
 		{
 
@@ -78,7 +79,6 @@ namespace blog
 			string dept1 = dept.Value;
 			string moblno1 = moblno.Value;
 			string email1 = mail.Value;
-
 			if (!username1.Equals("") && !useid1.Equals("") && !pass1.Equals("") && !dept1.Equals("") && !moblno1.Equals("") && !email1.Equals(""))
 			{
 				SqlConnection con = new SqlConnection(SqlConn);
@@ -111,10 +111,6 @@ namespace blog
 					ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "alertMessage", "alert('Already exits id please try agin...!')", true);
 					
 				}
-
-
-
-				
 			}
 			else
 			{

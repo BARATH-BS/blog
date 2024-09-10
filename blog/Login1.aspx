@@ -52,7 +52,7 @@
         }
 
         .form-modal .login, .form-modal .signup {
-            background: #57b846;
+            border: 1px solid#57b846;
             color: #57b846;
         }
 
@@ -133,7 +133,18 @@
         .form-modal p a:hover {
             color: #222;
         }
-
+        .disable {
+            cursor: not-allowed;
+            pointer-events: none;
+            background-color: #f5e3e3 !important;
+            color: #f14a4a !important;
+            border: 1px solid rgb(238, 135, 135) !important;
+        }
+        .d-none {
+            display: none;
+        }
+        .error { color: red; }
+        .valid { color: green; }
         .form-modal i {
             position: absolute;
             left: 10%;
@@ -175,7 +186,7 @@
     <form id="form1" runat="server">
         <div class="form-modal">
             <div class="form-toggle">
-                .<button type="button" id="login-toggle" onclick="toggleLogin()">Log In</button>
+                <button type="button" id="login-toggle" onclick="toggleLogin()">Log In</button>
                 <button type="button" id="signup-toggle" onclick="toggleSignup()">Sign Up</button>
             </div>
 
@@ -187,18 +198,158 @@
             </div>
 
             <div id="signup-form">
-                <input type="text" placeholder="Enter your Username" runat="server" id="Username" />
-                <input type="text" placeholder="Choose email" runat="server" id="email" />
-                <input type="password" placeholder="Create password" runat="server" id="Password" />
-                <input type="text" placeholder="Choose Userid" runat="server" id="Userid" />
-                <input type="text" placeholder="Choose Department" runat="server" id="Department" />
-                <input type="text" placeholder="Choose Mobile No" runat="server" id="moblnum" />
-                <asp:Button CssClass="btn signup" Text="Create Account" runat="server" ID="reg" OnClick="reg_Click"></asp:Button>
+                <input type="text" placeholder="Enter your Username" runat="server" id="Username" onkeyup="validateUsername()" />
+                <div id="usernameError" class="error"></div>
+
+                <input type="text" placeholder="Choose email" runat="server" id="email" onkeyup="validateEmail()" />
+                <div id="emailError" class="error"></div>
+
+                <input type="password" placeholder="Create password" runat="server" id="Password" onkeyup="validatePassword()" />
+                <div id="passwordError" class="error"></div>
+
+                <input type="text" placeholder="Choose Userid" runat="server" id="Userid" onkeyup="validateUserid()" />
+                <div id="useridError" class="error"></div>
+
+                <input type="text" placeholder="Choose Department" runat="server" id="Department" onkeyup="validateDepartment()" />
+                <div id="departmentError" class="error"></div>
+
+                <input type="text" placeholder="Choose Mobile No" runat="server" id="moblnum" onkeyup="validateMobile()" />
+                <div id="mobileError" class="error"></div>
+
+                <button class="btn signup disable" id="wrapper_reg" onclick="validateInputs()" style="width: 100%;">Create account</button>
+
+                <asp:Button CssClass="btn signup d-none" Text="Create Account" runat="server" ID="reg" OnClick="reg_Click"></asp:Button>
                 <hr />
             </div>
         </div>
 
         <script>
+            function validateUsername(dispError = true, validateAll = true) {
+                const username = document.getElementById('Username').value;
+                const usernameError = document.getElementById('usernameError');
+                if (username.length < 3) {
+                    if(dispError) {
+                        usernameError.textContent = "Username must be at least 3 characters long.";
+                    }
+                    if(validateAll) validateInputs(false, false);
+                    return false;
+                } else {
+                    usernameError.textContent = "";
+                    if(validateAll) validateInputs(false, false);
+                    return true;
+                }
+
+            }
+
+            function validateEmail(dispError = true, validateAll = true) {
+                const email = document.getElementById('email').value;
+                const emailError = document.getElementById('emailError');
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailPattern.test(email)) {
+                    if(dispError) {
+                        emailError.textContent = "Please enter a valid email address.";
+                    }
+                    if(validateAll) validateInputs(false, false);
+                    return false;
+                } else {
+                    emailError.textContent = "";
+                    if(validateAll) validateInputs(false, false);
+                    return true;
+                }
+
+            }
+
+            function validatePassword(dispError = true, validateAll = true) {
+                const password = document.getElementById('Password').value;
+                const passwordError = document.getElementById('passwordError');
+                if (password.length < 6) {
+                    if(dispError) {
+                        passwordError.textContent = "Password must be at least 6 characters long.";
+                    }
+                    if(validateAll) validateInputs(false, false);
+                    return false;
+                } else {
+                    passwordError.textContent = "";
+                    if(validateAll) validateInputs(false, false);
+                    return true;
+                }
+
+            }
+
+            function validateUserid(dispError = true, validateAll = true) {
+                const userid = document.getElementById('Userid').value;
+                const useridError = document.getElementById('useridError');
+                if (userid.length < 3) {
+                    if(dispError) {
+                        useridError.textContent = "User ID must be at least 3 characters long.";
+                    }
+                    if(validateAll) validateInputs(false, false);
+                    return false;
+                } else {
+                    useridError.textContent = "";
+                    if(validateAll) validateInputs(false, false);
+                    return true;
+                }
+
+            }
+
+            function validateDepartment(dispError = true, validateAll = true) {
+                const department = document.getElementById('Department').value;
+                const departmentError = document.getElementById('departmentError');
+                if (department.trim() === "") {
+                    if(dispError) {
+                        departmentError.textContent = "Department cannot be empty.";
+                    }
+                    if(validateAll) validateInputs(false, false);
+                    return false;
+                } else {
+                    departmentError.textContent = "";
+                    if(validateAll) validateInputs(false, false);
+                    return true;
+                }
+
+            }
+
+            function validateMobile(dispError = true, validateAll = true) {
+                const mobile = document.getElementById('moblnum').value;
+                const mobileError = document.getElementById('mobileError');
+                const mobilePattern = /^[0-9]{10}$/;
+                if (!mobilePattern.test(mobile)) {
+                    if(dispError) {
+                        mobileError.textContent = "Please enter a valid 10-digit mobile number.";
+                    }
+                    if(validateAll) validateInputs(false, false);
+                    return false;
+                } else {
+                    mobileError.textContent = "";
+                    if(validateAll) validateInputs(false, false);
+                    return true;
+                }
+
+            }
+
+            function validateInputs(dispError = true, validateAll = false,createAccount = false){
+                let valid = true;
+                valid &= validateUsername(dispError, validateAll);
+                valid &= validateEmail(dispError, validateAll);
+                valid &= validatePassword(dispError, validateAll);
+                valid &= validateUserid(dispError, validateAll);
+                valid &= validateDepartment(dispError, validateAll);
+                valid &= validateMobile(dispError, validateAll);
+
+                let reg = document.getElementById('reg');
+                let wrapperReg = document.getElementById('wrapper_reg');
+                if(valid){
+                    wrapperReg.classList.remove('disable');
+                    if(createAccount){
+                        console.log("creating account")
+                        reg.click();
+                    }
+                }
+                else{
+                    wrapperReg.classList.add('disable');
+                }
+            }
             function toggleSignup() {
                 document.getElementById("login-toggle").style.backgroundColor = "#fff";
                 document.getElementById("login-toggle").style.color = "#222";
